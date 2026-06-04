@@ -117,4 +117,4 @@ if uploaded_file is not None:
                     st.write(f"**Vibes:** {', '.join(suggestion['vibe'])}")
 
 else:
-    st.info("👆 Upload a photo of your garment to get started.")
+    st.info("👆 Upload a photo of your garment to get started.") 
