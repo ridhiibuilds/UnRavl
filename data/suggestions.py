@@ -137,7 +137,7 @@ def get_suggestions(garment_type):
     if garment_type in UPCYCLE_SUGGESTIONS:
         return UPCYCLE_SUGGESTIONS[garment_type]["transformations"]
     else:
-        return []
+        return print("no such garment found")
 
 
 def get_suggestions_by_vibe(garment_type, vibe):
