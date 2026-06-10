@@ -5,6 +5,44 @@ import streamlit as st
 import sys
 sys.path.append(".")
 from data.suggestions import get_suggestions, get_suggestions_by_vibe, get_easy_suggestions
+#new imports for ai brain yeeehooo
+from transformers import pipeline
+from PIL import Image
+
+
+#class labels-----------------------------------------------------------------------------------------------------------
+
+class_names = ["Blazer",
+"Blouse",
+"Cardigan",
+"Dress",
+"Hoodie",
+"Jacket",
+"Jeans",
+"Nightgown",
+"Outerwear",
+"Pajamas","Rain jacket",
+"Rain trousers",
+"Robe",
+"Shirt",
+"Shorts",
+"Skirt",
+"Sweater",
+"T-shirt",
+"Tank top",
+"Tights",
+"Top",
+"Training top",
+"Trousers",
+"Tunic",
+"Vest",
+"Winter jacket","Winter trousers"]
+
+@st.cache_resource
+def load_classifier():
+    return pipeline("image-classification", model="wargoninnovation/wargon-clothing-classifier", framework="pt")
+
+classifier = load_classifier()
 
 # PAGE CONFIG-----------------------------------------------------------------------------------------------------------
 
@@ -26,6 +64,7 @@ st.divider()
 
 # STEP 1 — UPLOAD PHOTO-----------------------------------------------------------------------------------------------------------
 
+default_index = 0 
 
 st.markdown("### Step 1 — Upload your garment")
 uploaded_file = st.file_uploader(
@@ -35,7 +74,20 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
     st.image(uploaded_file, caption="Your garment", width=500)
-    st.success("Got it! Now tell us about this piece.")
+
+    image = Image.open(uploaded_file)          # turn upload into an image the model can read
+    with st.spinner("Analyzing your garment..."):
+        results = classifier(image)
+        
+   
+
+    top = results[0]
+    number = int(top['label'].replace("LABEL_", ""))
+    garment = class_names[number]
+    
+    default_index = class_names.index(garment)
+
+    st.success(f"Detected: {garment} ({top['score']:.0%})")         
     st.divider()
 
     # STEP 2 — GARMENT DETAILS
@@ -44,8 +96,7 @@ if uploaded_file is not None:
     st.markdown("### Step 2 — Tell us about it")
 
     garment_type = st.selectbox(
-        "What type of garment is this?",
-        ["tshirt", "jeans", "dress", "jacket"]
+        "What type of garment is this?",class_names,index=default_index
     )
 
     garment_color = st.text_input(
