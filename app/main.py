@@ -4,7 +4,7 @@
 import streamlit as st
 import sys
 sys.path.append(".")
-from data.suggestions import get_suggestions, get_suggestions_by_vibe, get_easy_suggestions
+from data.suggestions import get_suggestions, get_suggestions_by_vibe, get_easy_suggestions,label_to_suggestion_key,UPCYCLE_SUGGESTIONS
 #new imports for ai brain yeeehooo
 from transformers import pipeline
 from PIL import Image
@@ -87,7 +87,14 @@ if uploaded_file is not None:
     
     default_index = class_names.index(garment)
 
-    st.success(f"Detected: {garment} ({top['score']:.0%})")         
+    st.success(f"Detected: {garment} ({top['score']:.0%})")  
+    
+    suggestion_key = label_to_suggestion_key.get(garment)
+
+    if suggestion_key is None:
+        st.info("We haven't unravelled this one yet 🧵")
+    else:
+        ideas = UPCYCLE_SUGGESTIONS[suggestion_key]       
     st.divider()
 
     # STEP 2 — GARMENT DETAILS
@@ -146,26 +153,34 @@ if uploaded_file is not None:
             st.info("📐 Doesn't fit — here are resize and reconstruction ideas")
         if is_bored:
             st.success("✨ Bored of it — perfect for a transformation!")
+            
+        
 
         st.divider()
         st.markdown("### Your Upcycle Suggestions")
-
-        if vibe == "any":
-            suggestions = get_suggestions(garment_type)
+        
+        suggestion_key = label_to_suggestion_key.get(garment_type)
+        
+        if suggestion_key is None:
+            st.info("We haven't unravelled this one yet 🧵")
         else:
-            suggestions = get_suggestions_by_vibe(garment_type, vibe)
+            if vibe == "any":
+                suggestions = get_suggestions(suggestion_key)
+            else:
+                suggestions = get_suggestions_by_vibe(suggestion_key, vibe)
 
-        if is_damaged:
-            suggestions = get_easy_suggestions(garment_type)
+            if is_damaged:
+                suggestions = get_easy_suggestions(suggestion_key)
+            
 
-        if len(suggestions) == 0:
-            st.warning("No suggestions found for this combination. Try a different vibe!")
-        else:
-            for suggestion in suggestions:
-                with st.expander(f"✂️ {suggestion['name']} — {suggestion['difficulty']}"):
-                    st.write(f"**What to do:** {suggestion['description']}")
-                    st.write(f"**Tools needed:** {', '.join(suggestion['tools'])}")
-                    st.write(f"**Vibes:** {', '.join(suggestion['vibe'])}")
+            if len(suggestions) == 0:
+                st.warning("No suggestions found for this combination. Try a different vibe!")
+            else:
+                for suggestion in suggestions:
+                    with st.expander(f"✂️ {suggestion['name']} — {suggestion['difficulty']}"):
+                        st.write(f"**What to do:** {suggestion['description']}")
+                        st.write(f"**Tools needed:** {', '.join(suggestion['tools'])}")
+                        st.write(f"**Vibes:** {', '.join(suggestion['vibe'])}")
 
 else:
     st.info("👆 Upload a photo of your garment to get started.") 

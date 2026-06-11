@@ -4,7 +4,7 @@
 # Every garment type and its transformation possibilities
 
 UPCYCLE_SUGGESTIONS = {
-    "tshirt": {
+    "Tshirt": {
         "transformations": [
             {
                 "name": "Crop Top",
@@ -43,7 +43,7 @@ UPCYCLE_SUGGESTIONS = {
             }
         ]
     },
-    "jeans": {
+    "Jeans": {
         "transformations": [
             {
                 "name": "Shorts",
@@ -75,7 +75,7 @@ UPCYCLE_SUGGESTIONS = {
             }
         ]
     },
-    "dress": {
+    "Dress": {
         "transformations": [
             {
                 "name": "Mini Skirt",
@@ -100,7 +100,7 @@ UPCYCLE_SUGGESTIONS = {
             }
         ]
     },
-    "jacket": {
+    "Jacket": {
         "transformations": [
             {
                 "name": "Cropped Jacket",
@@ -128,16 +128,46 @@ UPCYCLE_SUGGESTIONS = {
 }
 
 
+
+label_to_suggestion_key = {
+   "Blazer":None,
+"Blouse":None,
+"Cardigan":None,
+"Dress":"Dress",
+"Hoodie":None,
+"Jacket":"Jacket",
+"Jeans":"Jeans",
+"Nightgown":None,
+"Outerwear":None,
+"Pajamas":None,
+"Rain jacket":"Jacket",
+"Rain trousers":None,
+"Robe":None,
+"Shirt":None,
+"Shorts":None,
+"Skirt":None,
+"Sweater":None,
+"T-shirt":"Tshirt",
+"Tank top":"Tshirt",
+"Tights":None,
+"Top":"Tshirt",
+"Training top":None,
+"Trousers":None,
+"Tunic":None,
+"Vest":None,
+"Winter jacket":"Jacket",
+"Winter trousers":None
+}
+
+
 def get_suggestions(garment_type):
     """
     Takes a garment type and returns all transformation ideas
     """
-    garment_type = garment_type.lower()
-    
     if garment_type in UPCYCLE_SUGGESTIONS:
         return UPCYCLE_SUGGESTIONS[garment_type]["transformations"]
     else:
-        return print("no such garment found")
+        return []
 
 
 def get_suggestions_by_vibe(garment_type, vibe):
